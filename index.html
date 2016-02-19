@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        .gallery {
+            display: flex;
+        }
+        .gallery li {
+            width: 100px;
+            height: 100px;
+            margin: 5px;
+            background-color: red;
+            list-style: none;
+            position: relative;
+            overflow: hidden;
+        }
+        .shadow {
+            position: absolute;
+            background-color: green;
+            width: 100px;
+            height: 100px;
+            transform: translate(100px, 0) translateZ(0);
+        }
+        .animate {
+            transition: transform 300ms ease;
+        }
+    </style>
+    <script src="//a.alipayobjects.com/??amui/zepto/1.1.3/zepto.js"></script>
+</head>
+<body>
+<ul class="gallery">
+    <li>
+        <div class="shadow"></div>
+    </li>
+    <li>
+        <div class="shadow"></div>
+    </li>
+    <li>
+        <div class="shadow"></div>
+    </li>
+    <li>
+        <div class="shadow"></div>
+    </li>
+</ul>
+<script>
+    var transCss = ['translate(0, -100px) translateZ(0)',
+                'translate(100px, 0) translateZ(0)',
+                'translate(0, 100px) translateZ(0)',
+                'translate(-100px, 0) translateZ(0)',
+                'translate(0, 0) translateZ(0)'],
+            timer;
+    function handler(type) {
+        return function (ev) {
+            var $target = $(this).find('.shadow');
+            var x = ev.pageX - this.offsetLeft - 50, y = ev.pageY - this.offsetTop - 50;
+            var direction = Math.round((((Math.atan2(y, x) * (180 / Math.PI)) + 180) / 90) + 3) % 4; //0123上右下左
+            clearTimeout(timer);
+            $target.css({transform: transCss[direction]});
+            timer = type == 'mouseenter' ?
+                    setTimeout(function () {
+                        $target.addClass('animate').css({transform: transCss[4]})
+                    }, 0) :
+                    setTimeout(function () {
+                        $target.removeClass('animate')
+                    }, 300);
+        }
+    }
+    $('.gallery li').on('mouseenter', handler('mouseenter'))
+            .on('mouseleave', handler('mouseleave'));
+</script>
+</body>
+</html>
